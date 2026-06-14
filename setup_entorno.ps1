@@ -13,46 +13,34 @@ $ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 Write-Host "=== Setup RelBench ===" -ForegroundColor Cyan
 Write-Host "Directorio: $ProjectRoot" -ForegroundColor Yellow
 
-# --- Resolver Python con pyenv o ruta directa ---
-# Detectar si pyenv esta gestionando Python
+# --- Resolver Python ---
 $PythonExe = $null
 
-# Intento 1: pyenv
-$PyenvVersions = & pyenv versions 2>$null
-if ($PyenvVersions) {
-    Write-Host "pyenv detectado. Buscando version instalada..." -ForegroundColor Yellow
-    # Usar la primera version disponible (no system, no *)
-    $PyenvRoot = & pyenv root 2>$null
-    $Versions = Get-ChildItem "$PyenvRoot\versions" -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending
+# Intento 1: ruta estandar de pyenv-win
+$PyenvVersionsPath = "$env:USERPROFILE\.pyenv\pyenv-win\versions"
+if (Test-Path $PyenvVersionsPath) {
+    $Versions = Get-ChildItem $PyenvVersionsPath | Where-Object { $_.PSIsContainer } | Sort-Object Name -Descending
     if ($Versions) {
         $BestVersion = $Versions[0].Name
-        Write-Host "Usando pyenv version: $BestVersion" -ForegroundColor Yellow
+        Write-Host "pyenv-win: usando version $BestVersion" -ForegroundColor Yellow
         & pyenv global $BestVersion
-        $PythonExe = "$PyenvRoot\versions\$BestVersion\python.exe"
+        $PythonExe = "$PyenvVersionsPath\$BestVersion\python.exe"
     }
 }
 
-# Intento 2: ruta tipica de instalacion directa
+# Intento 2: python en PATH
 if (-not $PythonExe -or -not (Test-Path $PythonExe)) {
-    $Candidates = @(
-        "$env:LOCALAPPDATA\Programs\Python\Python311\python.exe",
-        "$env:LOCALAPPDATA\Programs\Python\Python310\python.exe",
-        "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe",
-        "C:\Python311\python.exe",
-        "C:\Python310\python.exe"
-    )
-    foreach ($c in $Candidates) {
-        if (Test-Path $c) { $PythonExe = $c; break }
-    }
+    $cmd = Get-Command python -ErrorAction SilentlyContinue
+    if ($cmd) { $PythonExe = $cmd.Source }
 }
 
 if (-not $PythonExe -or -not (Test-Path $PythonExe)) {
-    Write-Host "[ERROR] No se encontro Python. Instala una version con: pyenv install 3.11.9" -ForegroundColor Red
-    Write-Host "        Luego ejecuta: pyenv global 3.11.9" -ForegroundColor Red
+    Write-Host "[ERROR] No se encontro Python." -ForegroundColor Red
+    Write-Host "        Ejecuta: pyenv global 3.12.9" -ForegroundColor Yellow
     exit 1
 }
 
-Write-Host "Python encontrado: $PythonExe" -ForegroundColor Cyan
+Write-Host "Python: $PythonExe" -ForegroundColor Cyan
 
 # 1. Crear entorno virtual
 Write-Host "`n[1/6] Creando entorno virtual..." -ForegroundColor Green
