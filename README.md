@@ -17,7 +17,7 @@
 
 ```powershell
 # 1. Clonar el repositorio
-git clone <URL_DEL_REPO>
+git clone https://github.com/LuisMirandaMallqui/Graph-Learning-Tarea-Academica-1INF61.git
 cd Tarea_Academica
 
 # 2. Ejecutar el script de setup (Windows PowerShell)
