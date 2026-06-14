@@ -1,0 +1,33 @@
+# ============================================================
+# RelBench - Temas Avanzados de IA PUCP 2026
+# RTX 4070 SUPER / CUDA 12.1
+#
+# IMPORTANTE: NO usar pip install -r requirements.txt directamente.
+# PyTorch y PyG necesitan URLs especiales.
+# Usar setup_entorno.ps1 para instalar correctamente.
+# ============================================================
+
+# --- Core RelBench ---
+relbench[full]
+relbench[example]
+
+# --- PyTorch (instalar ANTES con URL especial) ---
+# torch==2.3.0  ->  pip install torch==2.3.0 --index-url https://download.pytorch.org/whl/cu121
+# torch_geometric -> pip install torch_geometric
+# pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv
+#   -f https://data.pyg.org/whl/torch-2.3.0+cu121.html
+
+# --- Jupyter ---
+jupyter
+ipykernel
+notebook
+
+# --- Visualizacion y utilidades ---
+matplotlib
+seaborn
+tqdm
+networkx
+
+# --- Opcionales (CTU / TGB) ---
+# relbench[ctu]
+# relbench[dbinfer]
