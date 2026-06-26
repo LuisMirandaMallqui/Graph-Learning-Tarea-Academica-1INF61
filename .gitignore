@@ -26,8 +26,6 @@ build/
 *.ipynb_checkpoints
 
 # --- PyTorch / modelos entrenados ---
-*.pt
-*.pth
 *.ckpt
 *.safetensors
 checkpoints/
